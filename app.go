@@ -2,9 +2,11 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
-    	"net/http"
+	"net/http"
 	"os"
+	"time"
 )
 
 //go:embed templates/*
@@ -14,19 +16,16 @@ var t = template.Must(template.ParseFS(templates, "templates/*"))
 //go:embed static/*
 var assets embed.FS
 
-
 func main() {
 	port := "3000"
-	if(os.Getenv("PORT") != "") {
+	if os.Getenv("PORT") != "" {
 		port = os.Getenv("PORT")
 	}
 
-    http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
-        t.Execute(w, "")
-    })
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hello " + r.RemoteAddr + "the time is\n " + time.Now().Format(time.RFC1123)))
+	})
 
-    fs := http.FileServer(http.FS(assets))
-    http.Handle("/static/", fs)
-
-    http.ListenAndServe(":" + port, nil)
+	fmt.Println("Listening on port " + port)
+	http.ListenAndServe(":"+port, nil)
 }
