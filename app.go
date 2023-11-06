@@ -26,10 +26,18 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
+
+	port := "3000"
+	if os.Getenv("PORT") != "" {
+		port = os.Getenv("PORT")
+	}
 
 	app := fiber.New()
 
@@ -37,5 +45,7 @@ func main() {
 		return c.SendString("Hello, World!")
 	})
 
-	app.Listen(":3000")
+	fmt.Println("Listening on port " + port)
+
+	app.Listen(":" + port)
 }
